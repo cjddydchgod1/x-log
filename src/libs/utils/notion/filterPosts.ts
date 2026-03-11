@@ -9,6 +9,7 @@ const initialOption: FilterPostsOptions = {
   acceptStatus: ["Public"],
   acceptType: ["Post"],
 }
+
 const current = new Date()
 const tomorrow = new Date(current)
 tomorrow.setDate(tomorrow.getDate() + 1)
@@ -19,22 +20,24 @@ export function filterPosts(
   options: FilterPostsOptions = initialOption
 ) {
   const { acceptStatus = ["Public"], acceptType = ["Post"] } = options
-  const filteredPosts = posts
-    // filter data
-    .filter((post) => {
-      const postDate = new Date(post?.date?.start_date || post.createdTime)
-      if (!post.title || !post.slug || postDate > tomorrow) return false
-      return true
-    })
-    // filter status
-    .filter((post) => {
-      const postStatus = post.status[0]
-      return acceptStatus.includes(postStatus)
-    })
-    // filter type
-    .filter((post) => {
-      const postType = post.type[0]
-      return acceptType.includes(postType)
-    })
-  return filteredPosts
+
+  return (
+    posts
+      // 1. 기본 유효성 및 날짜 필터
+      .filter((post) => {
+        const postDate = new Date(post?.date?.start_date || post.createdTime)
+        if (!post.title || !post.slug || postDate > tomorrow) return false
+        return true
+      })
+      // 2. 상태 필터 (다중 선택 대응)
+      .filter((post) => {
+        // post.status 배열의 요소 중 하나라도 acceptStatus에 포함되는지 확인
+        return post.status.some((status) => acceptStatus.includes(status))
+      })
+      // 3. 타입 필터 (다중 선택 대응)
+      .filter((post) => {
+        // post.type 배열의 요소 중 하나라도 acceptType에 포함되는지 확인
+        return post.type.some((type) => acceptType.includes(type))
+      })
+  )
 }

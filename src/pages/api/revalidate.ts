@@ -14,14 +14,14 @@ export default async function handler(
   }
 
   try {
+    // [보안/개선] 전체 갱신 시 메인 페이지(/)를 가장 먼저 갱신합니다.
+    await res.revalidate("/")
+
     if (path && typeof path === "string") {
       // [수정] 입력된 path가 /로 시작하지 않으면 자동으로 붙여줍니다.
       const revalidatePath = path.startsWith("/") ? path : `/${path}`
       await res.revalidate(revalidatePath)
     } else {
-      // [보안/개선] 전체 갱신 시 메인 페이지(/)를 가장 먼저 갱신합니다.
-      await res.revalidate("/")
-
       const posts = await getPosts()
       const revalidateRequests = posts.map((row) =>
         res.revalidate(`/${row.slug}`)

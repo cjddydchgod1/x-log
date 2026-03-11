@@ -3,9 +3,12 @@ import { filterPosts } from "src/libs/utils/notion"
 import { CONFIG } from "site.config"
 import { NextPageWithLayout } from "../types"
 import CustomError from "src/routes/Error"
-import { getPosts, getRecordMap } from "src/apis"
+import { getRecordMap, getPosts } from "src/apis"
 import MetaConfig from "src/components/MetaConfig"
 import { GetStaticProps } from "next"
+import { queryClient } from "src/libs/react-query"
+import { queryKey } from "src/constants/queryKey"
+import { dehydrate } from "@tanstack/react-query"
 import usePostQuery from "src/hooks/usePostQuery"
 import { FilterPostsOptions } from "src/libs/utils/notion/filterPosts"
 
@@ -25,30 +28,26 @@ export const getStaticPaths = async () => {
 }
 
 export const getStaticProps: GetStaticProps = async (context) => {
-  const { slug } = context.params as { slug: string }
+  const slug = context.params?.slug
 
-  try {
-    const posts = await getPosts()
-    const post = posts.find((t: any) => t.slug === slug)
+  const posts = await getPosts()
+  const feedPosts = filterPosts(posts)
+  await queryClient.prefetchQuery(queryKey.posts(), () => feedPosts)
 
-    // post를 찾지 못했거나 post.id가 없을 때의 처리
-    if (!post || !post.id) {
-      return { notFound: true }
-    }
+  const detailPosts = filterPosts(posts, filter)
+  const postDetail = detailPosts.find((t: any) => t.slug === slug)
+  const recordMap = await getRecordMap(postDetail?.id!)
 
-    const recordMap = await getRecordMap(post.id)
+  await queryClient.prefetchQuery(queryKey.post(`${slug}`), () => ({
+    ...postDetail,
+    recordMap,
+  }))
 
-    return {
-      props: {
-        recordMap,
-        post,
-      },
-      revalidate: CONFIG.revalidateTime,
-    }
-  } catch (error) {
-    console.error("Error in getStaticProps:", error)
-    // 에러 발생 시 500 페이지로 보내지 않고 일단 에러를 던짐
-    throw error
+  return {
+    props: {
+      dehydratedState: dehydrate(queryClient),
+    },
+    revalidate: CONFIG.revalidateTime,
   }
 }
 

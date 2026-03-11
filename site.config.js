@@ -33,7 +33,8 @@ const CONFIG = {
   // notion configuration (required)
   // [중요] 런타임 에러 방지를 위해 ID를 직접 기입했습니다.
   notionConfig: {
-    pageId: "f99e81110d578312ae61813152292402",
+    // pageId: "f99e81110d578312ae61813152292402",
+    pageId: process.env.NOTION_PAGE_ID,
   },
 
   // plugin configuration (optional)
@@ -58,7 +59,8 @@ const CONFIG = {
   utterances: {
     enable: true,
     config: {
-      repo: "cjddydchgod1/x-log", // 댓글 기능을 위해 리포지토리 연결
+      repo: process.env.NEXT_PUBLIC_UTTERANCES_REPO || "",
+      // repo: "cjddydchgod1/x-log", // 댓글 기능을 위해 리포지토리 연결
       "issue-term": "og:title",
       label: "💬 Utterances",
     },

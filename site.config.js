@@ -1,37 +1,39 @@
 const CONFIG = {
   // profile setting (required)
   profile: {
-    name: "morethanmin",
-    image: "/avatar.svg", // If you want to create your own notion avatar, check out https://notion-avatar.vercel.app
-    role: "frontend developer",
-    bio: "I develop everything using node.",
-    email: "morethanmin.dev@gmail.com",
-    linkedin: "morethanmin",
-    github: "morethanmin",
+    name: "JONGHO LEE",
+    image: "/avatar.svg", // 나중에 public 폴더의 이미지를 바꾸거나 주소를 넣으세요.
+    role: "Software Developer",
+    bio: "기술 블로그를 운영합니다.",
+    email: "cjddydchgod1@gmail.com", // 필요시 수정
+    linkedin: "", // 링크드인 ID가 있다면 입력
+    github: "cjddydchgod1",
     instagram: "",
   },
   projects: [
     {
-      name: `morethan-log`,
-      href: "https://github.com/morethanmin/morethan-log",
+      name: `x-log`,
+      href: "https://github.com/cjddydchgod1/x-log",
     },
   ],
   // blog setting (required)
   blog: {
-    title: "morethan-log",
-    description: "welcome to morethan-log!",
-    scheme: "dark", // 'light' | 'dark' | 'system'
+    title: "X-LOG",
+    description: "Gemini & Notion Automation Tech Blog",
+    scheme: "dark", // 이종호 님은 다크 모드를 선호하실 것 같아 유지했습니다.
   },
 
   // CONFIG configration (required)
-  link: "https://morethan-log.vercel.app",
-  since: 2022, // If leave this empty, current year will be used.
-  lang: "en-US", // ['en-US', 'zh-CN', 'zh-HK', 'zh-TW', 'ja-JP', 'es-ES', 'ko-KR']
-  ogImageGenerateURL: "https://og-image-korean.vercel.app", // The link to generate OG image, don't end with a slash
+  // [중요] 500 에러 해결을 위해 이종호 님의 실제 도메인으로 수정했습니다.
+  link: "https://x-log-ten.vercel.app",
+  since: 2026,
+  lang: "ko-KR", // 한국어로 변경
+  ogImageGenerateURL: "https://og-image-korean.vercel.app",
 
   // notion configuration (required)
+  // [중요] 런타임 에러 방지를 위해 ID를 직접 기입했습니다.
   notionConfig: {
-    pageId: process.env.NOTION_PAGE_ID,
+    pageId: "f99e81110d578312ae61813152292402",
   },
 
   // plugin configuration (optional)
@@ -56,7 +58,7 @@ const CONFIG = {
   utterances: {
     enable: true,
     config: {
-      repo: process.env.NEXT_PUBLIC_UTTERANCES_REPO || "",
+      repo: "cjddydchgod1/x-log", // 댓글 기능을 위해 리포지토리 연결
       "issue-term": "og:title",
       label: "💬 Utterances",
     },
@@ -65,11 +67,13 @@ const CONFIG = {
     enable: false,
     config: {
       host: "https://cusdis.com",
-      appid: "", // Embed Code -> data-app-id value
+      appid: "",
     },
   },
-  isProd: process.env.VERCEL_ENV === "production", // distinguish between development and production environment (ref: https://vercel.com/docs/environment-variables#system-environment-variables)
-  revalidateTime: 21600 * 7, // revalidate time for [slug], index
+  isProd: process.env.VERCEL_ENV === "production",
+
+  // [중요] 실시간 반영을 위해 42시간에서 1분(60초)으로 단축했습니다.
+  revalidateTime: 60,
 }
 
 module.exports = { CONFIG }
